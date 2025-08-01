@@ -1,0 +1,18 @@
+name: Jane Doe
+jobtitle: Data Scientist
+street: Some Street 21
+zip: 12345
+city: Berlin
+phone: +49 123 456 789
+email: jane.doe@icloud.com
+websites:
+  - name: GitHub
+    url: https://github.com/
+  - name: LinkedIn
+    url: https://www.linkedin.com/
+  - name: Portfolio
+    url: https://janedoe.com
+tag_base_url: https://janedoe.com/tag/
+closing_en: Kind regards,
+closing_de: Mit freundlichen Grüßen
+link_color: ffe8a9

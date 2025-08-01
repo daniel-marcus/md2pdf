@@ -1,0 +1,28 @@
+% \documentclass[a4paper,12pt]{dinbrief}
+\documentclass[version=last, fromalign=right, fontsize=11pt]{scrlttr2}
+
+\input{templates/_shared.tex}
+\usepackage{xcolor}
+\definecolor{linkcolor}{HTML}{$link_color$}
+
+\setkomavar{fromname}{$name$}
+\setkomavar{fromaddress}{$street $\\ $zip$ $city$ \\ $phone$ \\ $email$}
+\setkomavar{backaddress}{$name$, $street$, $zip$ $city$}
+\setkomavar{place}{$city$}
+
+\setkomafont{fromname}{\LARGE}
+
+\setkomavar{subject}{$subject$}
+
+$if(date)$\setkomavar{date}{$date$}$endif$
+
+\begin{document}
+\begin{letter}{$toaddress$}
+  $if(opening)$\opening{$opening$}$endif$
+
+  $body$
+
+  \closing{$closing$}
+  \vspace{-5cm}
+\end{letter}
+\end{document}

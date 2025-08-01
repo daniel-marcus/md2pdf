@@ -1,0 +1,52 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{geometry}
+\geometry{
+  a4paper,
+  left=25mm,
+  right=25mm,
+  top=25mm,
+  bottom=25mm
+}
+
+\input{templates/_shared.tex}
+
+\usepackage[table]{xcolor}
+\definecolor{linkcolor}{HTML}{$link_color$}
+\arrayrulecolor{gray!50}
+\usepackage{enumitem}
+\setlist[itemize]{label=•}
+
+\usepackage{titlesec}
+\titleformat{\section}[block]{\huge}{\thesection}{1em}{}
+\titlespacing*{\section}{0pt}{28pt}{10pt}
+\setlength{\tabcolsep}{10pt}
+
+\setlength{\parindent}{0pt}
+
+\begin{document}
+\pagestyle{empty}
+
+\begin{tabular}{@{} p{0.5\textwidth} >{\raggedleft\arraybackslash}p{0.5\textwidth} @{}}
+&   \Huge{$name$\medskip} \\
+\begin{minipage}[t]{0.5\textwidth}
+  $lead$
+\end{minipage} & \begin{minipage}[t]{0.5\textwidth}
+    \begin{flushright}
+      \emph{$jobtitle$} | $city$ \\
+      $email$ \\
+      $if(websites)$
+        $for(websites/allbutlast)$
+          \customhref{$websites.url$}{$websites.name$} | 
+        $endfor$
+        $for(websites/last)$
+          \customhref{$websites.url$}{$websites.name$}
+        $endfor$
+      $endif$
+    \end{flushright}
+  \end{minipage}
+\end{tabular}
+
+$body$
+
+\end{document}

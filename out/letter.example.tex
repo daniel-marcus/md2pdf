@@ -1,0 +1,55 @@
+% \documentclass[a4paper,12pt]{dinbrief}
+\documentclass[version=last, fromalign=right, fontsize=11pt]{scrlttr2}
+
+\input{templates/_shared.tex}
+\usepackage{xcolor}
+\definecolor{linkcolor}{HTML}{ffe8a9}
+
+\setkomavar{fromname}{Jane Doe}
+\setkomavar{fromaddress}{Some Street 21\\ 12345 Berlin \\ +49 123 456
+789 \\ \href{mailto:jane.doe@icloud.com}{jane.doe@icloud.com}}
+\setkomavar{backaddress}{Jane Doe, Some Street 21, 12345 Berlin}
+\setkomavar{place}{Berlin}
+
+\setkomafont{fromname}{\LARGE}
+
+\setkomavar{subject}{Lorem ipsum dolor sit amet}
+
+\setkomavar{date}{August 1, 2025}
+
+\begin{document}
+\begin{letter}{Some Company\\Another Street 21\\12345 Berlin}
+  \opening{Dear Mr.~xyz,}
+
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+  eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+  minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+  aliquip ex ea commodo consequat. Duis aute irure dolor in
+  reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+  pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+  culpa qui officia deserunt mollit anim id est laborum.
+
+  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+  nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
+  reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+  pariatur.
+
+  \begin{itemize}
+  \item
+    \customhref{https://externallink.com}{Ut enim ad minim veniam}, quis
+    nostrud exercitation
+  \item
+    Duis aute irure
+    \customhref{https://externallink.com}{dolor in reprehenderit}
+  \item
+    \customhref{https://externallink.com}{Excepteur sint} occaecat
+    cupidatat non proident
+  \end{itemize}
+
+  Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+  officia deserunt mollit anim id est laborum.
+
+  \closing{Kind regards,}
+  \vspace{-5cm}
+\end{letter}
+\end{document}
