@@ -1,10 +1,3 @@
 .DS_Store
 
 config.yaml
-
-/in/**
-!/in/*.example.md
-
-/out/**
-!/out/*.example.tex
-!/out/*.example.pdf

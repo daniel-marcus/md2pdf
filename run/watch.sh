@@ -1,12 +1,15 @@
 #!/bin/bash
 
-echo "Watching for changes in ./in/*.md"
+# MDTEX_DIR: if not provided, fallback to $(pwd)
+: "${MDTEX_DIR:=$(pwd)}"
 
-fswatch -e ".*" -i "\\.md$" -r ./in | while read -r file; do
+echo "Watching for changes in $(pwd)/*.md"
+
+fswatch -e ".*" -i "\\.md$" --event=Updated -r ./ | while read -r file; do
   # Skip if file was deleted
   if [[ -f "$file" && "$file" == *.md ]]; then
-    filename="$(basename "$file" .md)"
-    echo "Detected change in $filename.md → Compiling ..."
-    ./run/compile.sh "$filename"
+    filename="$(basename "$file")"
+    echo "Detected change in $filename → Compiling ..."
+    $MDTEX_DIR/run/compile.sh "$file"
   fi
 done

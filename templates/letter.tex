@@ -1,16 +1,13 @@
-% \documentclass[a4paper,12pt]{dinbrief}
 \documentclass[version=last, fromalign=right, fontsize=11pt]{scrlttr2}
 
-\input{templates/_shared.tex}
-\usepackage{xcolor}
+$header-includes$
 \definecolor{linkcolor}{HTML}{$link_color$}
 
 \setkomavar{fromname}{$name$}
+\setkomafont{fromname}{\LARGE}
 \setkomavar{fromaddress}{$street $\\ $zip$ $city$ \\ $phone$ \\ $email$}
 \setkomavar{backaddress}{$name$, $street$, $zip$ $city$}
 \setkomavar{place}{$city$}
-
-\setkomafont{fromname}{\LARGE}
 
 \setkomavar{subject}{$subject$}
 

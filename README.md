@@ -12,27 +12,35 @@ Installation on macOS (with full MacTex distribution):
 brew install pandoc fswatch && brew install --cask mactex
 ```
 
+## Installation
+
+```sh
+./run/install.sh
+```
+
+This will create a `mdtex` bash script in your `~/.local/bin/` folder and make it available as a global command (assuming `~/.local/bin/` is in your `PATH`). In case you move the `md2tex2pdf` folder to another location later you should re-run the install command.
+
 ## Usage
 
 ```sh
-./run/watch.sh
+mdtex
 ```
 
-This starts the watch script: Any change of `.md` files in the `/in/` folder will trigger recompilation.
+This starts the watch script: Any change of `.md` files in the current directory will trigger recompilation.
 
-Or compile manually:
+Or compile a file manually:
 
 ```sh
-./run/compile.sh [FILENAME without .md, e.g. cv.example]
+mdtex yourfile.md
 ```
 
-Generated files (`.tex` and `.pdf`) will be saved in the `/out/` folder.
+Generated files (`.tex` and `.pdf`) will be saved in directory of the source file.
 
 ## Configuration
 
 Copy `config.example.yaml` to `config.yaml` and edit the variables that are being used in the templates (name, email, websites, ...).
 
-> Note that `*.example.md` files will **always** use `config.example.yaml`.
+> Note that `*.md` files in the `example` folder will always use `config.example.yaml`.
 
 In your Markdown files, you can extend or overwrite them using a YAML front matter block:
 

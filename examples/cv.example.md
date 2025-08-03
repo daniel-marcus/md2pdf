@@ -23,7 +23,7 @@ template: cv
   _Data Scientist_
 
   - Developed a [recommender system](https://externallink.com) that improved user engagement by 20%
-  - Designed and maintained ETL data pipeline
+  - Designed and maintained ETL data pipelines
 
   `Recommender Systems` `ETL` `SQL` `Data Pipelines`
 
