@@ -25,7 +25,7 @@ You must also have a typesetting engine installed:
 ./run/install.sh
 ```
 
-This will create a `md2pdf` Bash script in your `~/.local/bin/` folder and make it available as a global command (assuming `~/.local/bin/` is in your `PATH`).
+This will create a `md2pdf` Bash script in your `~/.local/bin/` directory and make it available as a global command (assuming `~/.local/bin/` is in your `PATH`).
 
 > If you move the `md2pdf` folder to another location later, you should re-run the install command.
 
