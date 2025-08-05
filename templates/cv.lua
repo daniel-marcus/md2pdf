@@ -70,7 +70,7 @@ function process_list(list)
 
         if #item == 0 then -- empty row
             latex_rows[#latex_rows + 1] = "\\multicolumn{2}{c}{} \\\\"
-            typst_rows[#typst_rows + 1] = "table.cell(colspan: 2, stroke: none, [])"
+            typst_rows[#typst_rows + 1] = "table.cell(colspan: 2, stroke: none, block(height: 1em, []))"
         else
             -- Process first paragraph for label and first text piece
             local firstBlock = item[1]
@@ -94,20 +94,20 @@ function process_list(list)
                 table.insert(texts, nested_latex)
             end
 
-            local fulltext = table.concat(texts, " \\\\\n")
+            local latex_fulltext = table.concat(texts, " \\\\\n")
+            local typst_fulltext = table.concat(texts, " \\\n")
 
             latex_rows[#latex_rows + 1] = string.format(
-                "%s & \\begin{minipage}[t]{\\linewidth} %s \\end{minipage} \\\\", label, fulltext)
+                "%s & \\begin{minipage}[t]{\\linewidth} %s \\end{minipage} \\\\", label, latex_fulltext)
 
-            typst_rows[#typst_rows + 1] = string.format("[%s], [%s]", label, fulltext)
+            typst_rows[#typst_rows + 1] = string.format("[%s], [%s]", label, typst_fulltext)
         end
     end
 
     local latex_table = "\\begin{flushright}\n\\begin{tabular}{r|p{" .. tabcolwidth .. "}}\n" ..
                             table.concat(latex_rows, "\n") .. "\n\\end{tabular}\n\\end{flushright}\n"
 
-    local typst_table = "#align(right)[#table(\n  columns: (auto, " .. tabcolwidth ..
-                            "),\n  stroke: (x, y) => if x > 0 { (left: 1pt + gray.lighten(50%)) } else { none },\n  align: (right, left),\n" ..
+    local typst_table = "#align(right)[#table(\n  columns: (auto, " .. tabcolwidth .. " + 2em),\n" ..
                             table.concat(typst_rows, ",\n") .. "\n)]"
 
     return {pandoc.RawBlock("latex", latex_table), pandoc.RawBlock("typst", typst_table)}

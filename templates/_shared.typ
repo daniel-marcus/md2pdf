@@ -21,14 +21,15 @@
     }]
 }
 
-#let bubble_tag(name, color: rgb("dddddd"), text_color: rgb("666666")) = {
+#let bubble_tag(name, color: rgb("#e6e6e6"), text_color: rgb("#595959")) = {
     box(
       fill: color,
       stroke: none,
       radius: 5pt,
-      inset: (x: 4pt, y: 4pt),
+      inset: (x: 4pt, top: 3pt, bottom: 0pt),
+      height: 1.1em,
       outset: 0pt,
-      baseline: 50%,
+      baseline: 0%,
       text(name, font: "Menlo", size: 8pt, fill: text_color)
     )
 }
