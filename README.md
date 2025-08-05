@@ -1,16 +1,23 @@
-Create PDF documents from Markdown text with LaTeX-templates
+# md2pdf
+
+Create PDF documents from Markdown using LaTeX or Typst templates
 
 ![](screenshot.png)
 
 ## Requirements
 
-[Pandoc](https://pandoc.org) and [LaTeX](https://www.tug.org/texlive/) for text conversion, [fswatch](https://emcrisostomo.github.io/fswatch/) for the watch script.
+[Pandoc](https://pandoc.org) for text conversion, [fswatch](https://emcrisostomo.github.io/fswatch/) for the watch script.
 
-Installation on macOS (with full MacTex distribution):
+Installation on macOS using [Homebrew](https://brew.sh):
 
 ```sh
-brew install pandoc fswatch && brew install --cask mactex
+brew install pandoc fswatch
 ```
+
+Also, you must have installed a typesetting engine:
+
+- [LaTeX](https://www.tug.org/texlive/) for `.tex` templates
+- [Typst](https://github.com/typst/typst) for `.typ` templates
 
 ## Installation
 
@@ -18,12 +25,14 @@ brew install pandoc fswatch && brew install --cask mactex
 ./run/install.sh
 ```
 
-This will create a `mdtex` bash script in your `~/.local/bin/` folder and make it available as a global command (assuming `~/.local/bin/` is in your `PATH`). In case you move the `md2tex2pdf` folder to another location later you should re-run the install command.
+This will create a `md2pdf` bash script in your `~/.local/bin/` folder and make it available as a global command (assuming `~/.local/bin/` is in your `PATH`).
+
+> In case you move the `md2pdf` folder to another location later you should re-run the install command.
 
 ## Usage
 
 ```sh
-mdtex
+md2pdf
 ```
 
 This starts the watch script: Any change of `.md` files in the current directory will trigger recompilation.
@@ -31,10 +40,10 @@ This starts the watch script: Any change of `.md` files in the current directory
 Or compile a file manually:
 
 ```sh
-mdtex yourfile.md
+md2pdf [--raw] yourfile.md
 ```
 
-Generated files (`.tex` and `.pdf`) will be saved in directory of the source file.
+The generated `.pdf` file will be saved in directory of the source file. If the command is run with a `--raw` flag, the output will be a `.tex` or a `.typ` file, depending on the used template.
 
 ## Configuration
 
@@ -46,7 +55,7 @@ In your Markdown files, you can extend or overwrite them using a YAML front matt
 
 ```
 ---
-template: cv          # or "letter" or any other template that you have in your /templates/ folder
+template: cv.tex      # or "letter.tex" or any other template that you have in your /templates/ folder
 link_color: e8a9ff    # hex code for custom link color in this document
 ---
 ```

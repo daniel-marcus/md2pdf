@@ -4,23 +4,37 @@ function is_dot_line(inline)
     return inline.t == "Str" and inline.text == "."
 end
 
-function latexify_inlines(inlines)
+function parse_element(el)
+    return pandoc.write(pandoc.Pandoc({el}), FORMAT)
+end
+
+function parse_inlines(inlines)
     local new_inlines = {}
     for _, inline in ipairs(inlines) do
         if inline.t == "SoftBreak" then --  SoftBreak -> "\\"
-            table.insert(new_inlines, pandoc.RawInline("latex", "\\\\"))
+            table.insert(new_inlines, pandoc.LineBreak())
         elseif is_dot_line(inline) then -- inline "." -> half row spacing
+            -- TODO typst
             table.insert(new_inlines, pandoc.RawInline("latex", "\\vspace{-0.5\\baselineskip}"))
         else
             table.insert(new_inlines, inline)
         end
     end
-    return pandoc.write(pandoc.Pandoc({pandoc.Para(new_inlines)}), "latex"):gsub("\n$", "")
+    return pandoc.write(pandoc.Pandoc({pandoc.Para(new_inlines)}), FORMAT):gsub("\n$", "")
 end
 
-function latexify_blocks(blocks, no_vspace)
-    local latex = pandoc.write(pandoc.Pandoc(blocks), "latex"):gsub("\n$", "")
+function parse_blocks(blocks, no_vspace)
+    local parsed_blocks = {}
+    for _, block in ipairs(blocks) do
+        if block.t == "BulletList" and FORMAT == "typst" then
+            table.insert(parsed_blocks, wrap_list_in_pad(block))
+        else
+            table.insert(parsed_blocks, block)
+        end
+    end
+    local latex = pandoc.write(pandoc.Pandoc(parsed_blocks), FORMAT):gsub("\n$", "")
     -- Reduce vertical spacing before itemize
+    -- TODO typst
     latex = latex:gsub("\\begin{itemize}", "\\vspace{-1\\baselineskip}\n\\begin{itemize}")
     return latex
 end
@@ -47,21 +61,24 @@ function trim(s)
 end
 
 function process_list(list)
-    local rows = {}
+    local latex_rows = {}
+    local typst_rows = {}
 
     for _, item in ipairs(list.content) do
         local label = nil
         local texts = {}
 
         if #item == 0 then -- empty row
-            rows[#rows + 1] = "\\multicolumn{2}{c}{} \\\\"
+            latex_rows[#latex_rows + 1] = "\\multicolumn{2}{c}{} \\\\"
+            typst_rows[#typst_rows + 1] = "table.cell(colspan: 2, stroke: none, [])"
         else
             -- Process first paragraph for label and first text piece
             local firstBlock = item[1]
             if firstBlock.t == "Para" or firstBlock.t == "Plain" then
                 local label_inlines, text_inlines = split_inlines_at_pipe(firstBlock.content)
-                label = "\\textsc{" .. latexify_inlines(label_inlines) .. "}"
-                local text_latex = latexify_inlines(text_inlines)
+                local label_text = parse_inlines(label_inlines)
+                label = parse_element(pandoc.SmallCaps(label_text))
+                local text_latex = parse_inlines(text_inlines)
                 if text_latex ~= "" then
                     table.insert(texts, text_latex)
                 end
@@ -73,23 +90,27 @@ function process_list(list)
                 for i = 2, #item do
                     table.insert(remaining_blocks, item[i])
                 end
-
-                local nested_latex = latexify_blocks(remaining_blocks, false) -- #texts > 0)
+                local nested_latex = parse_blocks(remaining_blocks, false) -- #texts > 0)
                 table.insert(texts, nested_latex)
             end
 
             local fulltext = table.concat(texts, " \\\\\n")
 
-            rows[#rows + 1] = string.format("%s & \\begin{minipage}[t]{\\linewidth} %s \\end{minipage} \\\\", label,
-                fulltext)
+            latex_rows[#latex_rows + 1] = string.format(
+                "%s & \\begin{minipage}[t]{\\linewidth} %s \\end{minipage} \\\\", label, fulltext)
+
+            typst_rows[#typst_rows + 1] = string.format("[%s], [%s]", label, fulltext)
         end
     end
 
-    local table_env =
-        "\\begin{flushright}\n\\begin{tabular}{r|p{" .. tabcolwidth .. "}}\n" .. table.concat(rows, "\n") ..
-            "\n\\end{tabular}\n\\end{flushright}\n"
+    local latex_table = "\\begin{flushright}\n\\begin{tabular}{r|p{" .. tabcolwidth .. "}}\n" ..
+                            table.concat(latex_rows, "\n") .. "\n\\end{tabular}\n\\end{flushright}\n"
 
-    return pandoc.RawBlock("latex", table_env)
+    local typst_table = "#align(right)[#table(\n  columns: (auto, " .. tabcolwidth ..
+                            "),\n  stroke: (x, y) => if x > 0 { (left: 1pt + gray.lighten(50%)) } else { none },\n  align: (right, left),\n" ..
+                            table.concat(typst_rows, ",\n") .. "\n)]"
+
+    return {pandoc.RawBlock("latex", latex_table), pandoc.RawBlock("typst", typst_table)}
 end
 
 function Pandoc(doc)
@@ -100,7 +121,10 @@ function Pandoc(doc)
         if i == 1 and block.t ~= "Header" then
             doc.meta.lead = pandoc.MetaBlocks({block})
         elseif block.t == "BulletList" then
-            table.insert(new_blocks, process_list(block))
+            local result = process_list(block)
+            for _, b in ipairs(result) do
+                table.insert(new_blocks, b)
+            end
         else
             table.insert(new_blocks, block)
         end
@@ -119,3 +143,8 @@ function Header(el)
     return el
 end
 
+function wrap_list_in_pad(block)
+    local typst_str = pandoc.write(pandoc.Pandoc({block}), "typst")
+    local wrapped = "#pad(y: 0.25em)[\n" .. typst_str .. "\n]\n"
+    return pandoc.RawBlock("typst", wrapped)
+end

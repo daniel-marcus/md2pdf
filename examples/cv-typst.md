@@ -1,5 +1,5 @@
 ---
-template: cv
+template: cv.typ
 ---
 
 # Skills

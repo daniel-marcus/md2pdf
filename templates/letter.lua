@@ -10,7 +10,11 @@ function parse_linebreaks(blocks)
     if type(blocks) == "table" and blocks[1] and blocks[1].t == "Para" then
         local inlines = {}
         for _, inline in ipairs(blocks[1].c) do
-            table.insert(inlines, inline.t == "SoftBreak" and pandoc.RawInline("latex", "\\\\") or inline)
+            if inline.t == "SoftBreak" then
+                table.insert(inlines, pandoc.LineBreak())
+            else
+                table.insert(inlines, inline)
+            end
         end
         return pandoc.MetaInlines(inlines)
     end
@@ -43,4 +47,17 @@ function parse_date(meta_date, lang_str)
     end
 
     return pandoc.MetaInlines {pandoc.Str(formatted_date)}
+end
+
+function wrap_list_in_pad(block)
+    local typst_str = pandoc.write(pandoc.Pandoc({block}), "typst")
+    local wrapped = "#pad(y: 1em)[\n" .. typst_str .. "\n]\n"
+    return pandoc.RawBlock("typst", wrapped)
+end
+
+function BulletList(el)
+    if FORMAT == "typst" then
+        return wrap_list_in_pad(el)
+    end
+    return el
 end

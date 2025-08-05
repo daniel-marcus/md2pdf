@@ -37,10 +37,10 @@ $header-includes$
       $email$ \\
       $if(websites)$
         $for(websites/allbutlast)$
-          \customhref{$websites.url$}{$websites.name$} | 
+          \styledlink{$websites.url$}{$websites.name$} | 
         $endfor$
         $for(websites/last)$
-          \customhref{$websites.url$}{$websites.name$}
+          \styledlink{$websites.url$}{$websites.name$}
         $endfor$
       $endif$
     \end{flushright}
