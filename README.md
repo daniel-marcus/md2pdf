@@ -6,7 +6,7 @@ Create PDF documents from Markdown using LaTeX or Typst templates
 
 ## Requirements
 
-[Pandoc](https://pandoc.org) for text conversion, [fswatch](https://emcrisostomo.github.io/fswatch/) for the watch script.
+[Pandoc](https://pandoc.org) is used for text conversion, and [fswatch](https://emcrisostomo.github.io/fswatch/) is used for the watch script.
 
 Installation on macOS using [Homebrew](https://brew.sh):
 
@@ -14,7 +14,7 @@ Installation on macOS using [Homebrew](https://brew.sh):
 brew install pandoc fswatch
 ```
 
-Also, you must have installed a typesetting engine:
+You must also have a typesetting engine installed:
 
 - [LaTeX](https://www.tug.org/texlive/) for `.tex` templates
 - [Typst](https://github.com/typst/typst) for `.typ` templates
@@ -25,9 +25,9 @@ Also, you must have installed a typesetting engine:
 ./run/install.sh
 ```
 
-This will create a `md2pdf` bash script in your `~/.local/bin/` folder and make it available as a global command (assuming `~/.local/bin/` is in your `PATH`).
+This will create a `md2pdf` Bash script in your `~/.local/bin/` folder and make it available as a global command (assuming `~/.local/bin/` is in your `PATH`).
 
-> In case you move the `md2pdf` folder to another location later you should re-run the install command.
+> If you move the `md2pdf` folder to another location later, you should re-run the install command.
 
 ## Usage
 
@@ -35,7 +35,7 @@ This will create a `md2pdf` bash script in your `~/.local/bin/` folder and make 
 md2pdf
 ```
 
-This starts the watch script: Any change of `.md` files in the current directory will trigger recompilation.
+This starts the watch script: Any change to `.md` files in the current directory will trigger recompilation.
 
 Or compile a file manually:
 
@@ -43,7 +43,7 @@ Or compile a file manually:
 md2pdf [--raw] yourfile.md
 ```
 
-The generated `.pdf` file will be saved in directory of the source file. If the command is run with a `--raw` flag, the output will be a `.tex` or a `.typ` file, depending on the used template.
+The generated `.pdf` file will be saved in the directory of the source file. If the command is run with the `--raw` flag, the output will be a `.tex` or a `.typ` file, depending on the template used.
 
 ## Configuration
 
