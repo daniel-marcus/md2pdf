@@ -14,13 +14,13 @@ chmod u+x $SCRIPT_FILE
 cat > $SCRIPT_FILE << EOM
 #/bin/bash
 
-MD2PDF_DIR=$(pwd)
+MD2PDF_DIR="$(pwd)"
 export MD2PDF_DIR
 
 if [ -z "\$1" ]; then
-  \$MD2PDF_DIR/run/watch.sh
+  "\$MD2PDF_DIR/run/watch.sh"
 else 
-  \$MD2PDF_DIR/run/compile.sh "\$@"
+  "\$MD2PDF_DIR/run/compile.sh" "\$@"
 fi
 EOM
 

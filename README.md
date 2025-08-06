@@ -60,6 +60,8 @@ link_color: e8a9ff    # hex code for custom link color in this document
 ---
 ```
 
+If no template is specified, Pandoc's default `.tex` template will be used.
+
 ## Extras
 
 Inline code (backtick-enclosed) will be rendered as tags (see [cv.example.pdf](out/cv.example.pdf)). If you add a hash before and you have specified a `tag_base_url` variable, it will also get a link (e.g, `https://yourwebsite.com/portfolio?tag={tag_name}`):

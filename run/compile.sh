@@ -3,7 +3,7 @@
 set -e
 
 # MD2PDF_DIR: if not provided, fallback to $(pwd)
-: "${MD2PDF_DIR:=$(pwd)}"
+MD2PDF_DIR="${MD2PDF_DIR:-$(pwd)}"
 
 # Check if an arg was provided
 if [ -z "$1" ]; then
@@ -36,8 +36,7 @@ CWD=$(dirname "$MD_FILE")
 
 cd "$CWD"
 
-# Extract the 'template' value from the YAML header or use DEFAULT_TEMPLATE
-DEFAULT_TEMPLATE_FILENAME="letter.tex"
+# Extract the 'template' value from the YAML header
 TEMPLATE_FILENAME=$(awk '
   BEGIN { in_yaml = 0 }
   /^---/ { in_yaml = !in_yaml; next }
@@ -47,22 +46,16 @@ TEMPLATE_FILENAME=$(awk '
     exit
   }
 ' "$MD_FILE")
-TEMPLATE_FILENAME=${TEMPLATE_FILENAME:-$DEFAULT_TEMPLATE_FILENAME}
 TEMPLATE_NAME="${TEMPLATE_FILENAME%.*}"
 TEMPLATE_EXTENSION="${TEMPLATE_FILENAME##*.}"
+TEMPLATE_EXTENSION="${TEMPLATE_EXTENSION:-tex}" # default to "tex"
 
-TEMPLATE_FILE="$MD2PDF_DIR/templates/$TEMPLATE_FILENAME"
+TEMPLATE_FILE="${TEMPLATE_FILENAME:+$MD2PDF_DIR/templates/$TEMPLATE_FILENAME}"
 FILTER_FILE="$MD2PDF_DIR/templates/$TEMPLATE_NAME.lua"
-
-if [ ! -e "$TEMPLATE_FILE" ]; then
-  echo "❌ Error: Template $TEMPLATE_FILE not found"
-  exit 1
-fi
-
-TEMPLATE_FILTER_ARG=$([[ -e "$FILTER_FILE" ]] && echo "--lua-filter=$FILTER_FILE")
-
 HEADER_FILE="$MD2PDF_DIR/templates/_shared.$TEMPLATE_EXTENSION"
-HEADER_ARG=$([[ -e "$HEADER_FILE" ]] && echo "--include-in-header=$HEADER_FILE")
+[[ -f "$TEMPLATE_FILE" ]] && TEMPLATE_ARG=(--template "$TEMPLATE_FILE") || TEMPLATE_ARG=()
+[[ -f "$FILTER_FILE" ]] && TEMPLATE_FILTER_ARG=(--lua-filter "$FILTER_FILE") || TEMPLATE_FILTER_ARG=()
+[[ -f "$HEADER_FILE" ]] && HEADER_ARG=(--include-in-header "$HEADER_FILE") || HEADER_ARG=()
 
 EXAMPLE_CONFIG_FILE="$MD2PDF_DIR/config.example.yaml"
 USER_CONFIG_FILE="$MD2PDF_DIR/config.yaml"
@@ -79,14 +72,18 @@ PDF_ENGINE=$([ "$TEMPLATE_EXTENSION" = "typ" ] && echo "typst" || echo "xelatex"
 OUT_EXTENSION=$([[ "$RAW" == 1 ]] && echo "$TEMPLATE_EXTENSION" || echo "pdf")
 OUT_FILE="$FILENAME.$OUT_EXTENSION"
 
-if ! pandoc "$MD_FILE" \
-  --pdf-engine="$PDF_ENGINE" \
-  --metadata-file="$CONFIG_FILE" \
-  --template="$TEMPLATE_FILE" \
-  --lua-filter="$MD2PDF_DIR/templates/_shared.lua" \
-  $TEMPLATE_FILTER_ARG \
-  $HEADER_ARG \
-  -s -o "$OUT_FILE"; then
+pandoc_cmd=(
+  pandoc "$MD_FILE"
+  --pdf-engine="$PDF_ENGINE"
+  --metadata-file="$CONFIG_FILE"
+  --lua-filter="$MD2PDF_DIR/templates/_shared.lua"
+  "${TEMPLATE_ARG[@]}"
+  "${TEMPLATE_FILTER_ARG[@]}"
+  "${HEADER_ARG[@]}"
+  -s -o "$OUT_FILE"
+)
+
+if ! "${pandoc_cmd[@]}"; then
   echo "❌ Error: pandoc failed"
   exit 1
 else 
