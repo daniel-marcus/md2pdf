@@ -46,9 +46,12 @@ function split_inlines_at_pipe(inlines)
     for _, inline in ipairs(inlines) do
         if not found_pipe and inline.t == "Str" and inline.text == "|" then
             found_pipe = true
+            if #label > 0 and label[#label].t == "Space" then -- remove whitespace before "|"
+                table.remove(label)
+            end
         elseif not found_pipe then
             table.insert(label, inline)
-        else
+        elseif not (#text == 0 and inline.t == "Space") then -- sip whitespace after "|"
             table.insert(text, inline)
         end
     end
@@ -77,10 +80,10 @@ function process_list(list)
             if firstBlock.t == "Para" or firstBlock.t == "Plain" then
                 local label_inlines, text_inlines = split_inlines_at_pipe(firstBlock.content)
                 local label_text = parse_inlines(label_inlines)
-                label = parse_element(pandoc.SmallCaps(label_text))
-                local text_latex = parse_inlines(text_inlines)
-                if text_latex ~= "" then
-                    table.insert(texts, text_latex)
+                label = parse_element(pandoc.SmallCaps(label_inlines))
+                local text_parsed = parse_inlines(text_inlines)
+                if text_parsed ~= "" then
+                    table.insert(texts, text_parsed)
                 end
             end
 
