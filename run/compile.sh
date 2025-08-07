@@ -77,6 +77,7 @@ pandoc_cmd=(
   --pdf-engine="$PDF_ENGINE"
   --metadata-file="$CONFIG_FILE"
   --lua-filter="$MD2PDF_DIR/templates/_shared.lua"
+  --citeproc
   "${TEMPLATE_ARG[@]}"
   "${TEMPLATE_FILTER_ARG[@]}"
   "${HEADER_ARG[@]}"
