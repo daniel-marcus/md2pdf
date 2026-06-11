@@ -27,6 +27,14 @@ local function Meta(meta)
     tag_base_url = stringify(meta.tag_base_url)
   end
 
+  if meta.websites and FORMAT == "typst" then
+    -- the typst writer escapes "//" as "/\/" (comment syntax), which breaks urls
+    -- interpolated into template strings; pass them through as raw typst instead
+    for _, site in ipairs(meta.websites) do
+      site.url = pandoc.MetaInlines({ pandoc.RawInline("typst", stringify(site.url)) })
+    end
+  end
+
   return meta
 end
 
