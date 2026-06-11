@@ -69,3 +69,17 @@ Inline code (backtick-enclosed) will be rendered as tags (see [cv.example.pdf](o
 ```
   Skills: `HTML` `CSS` `#JavaScript`
 ```
+
+## Testing
+
+```sh
+./run/test.sh
+```
+
+This compiles all examples in raw mode (`.tex`/`.typ`, no PDF engine needed) and diffs the output against the reference files in `tests/golden/`. After an intended change to a template or filter, regenerate them with:
+
+```sh
+./run/test.sh --update
+```
+
+> Note that the output may vary slightly between Pandoc versions.
