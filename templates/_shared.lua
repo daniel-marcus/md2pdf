@@ -1,6 +1,12 @@
 local tag_base_url
 
-function Meta(meta)
+local function no_style_link(text, target)
+    return pandoc.Link(text, target, "", pandoc.Attr("", {"url"}, {
+        no_style = "true"
+    }))
+end
+
+local function Meta(meta)
     local stringify = pandoc.utils.stringify
 
     if meta.website then
@@ -19,13 +25,7 @@ function Meta(meta)
     return meta
 end
 
-function no_style_link(text, target)
-    return pandoc.Link(text, target, "", pandoc.Attr("", {"url"}, {
-        no_style = "true"
-    }))
-end
-
-function Link(el)
+local function Link(el)
     local url = el.target
     local text = pandoc.utils.stringify(el.content)
     if el.attr.attributes["no_style"] then
@@ -39,7 +39,7 @@ function Link(el)
             pandoc.RawInline("typst", string.format("#styled_link(\"%s\", \"%s\")", url, text))}
 end
 
-function Str(el)
+local function Str(el)
     local lead, tag, trail = el.text:match("^(%p*)#([%w_.+-]+)(%p*)$")
     if tag and tag_base_url then
         local tag_name = tag:gsub("_", " ")
@@ -49,7 +49,7 @@ function Str(el)
     return el
 end
 
-function Code(el)
+local function Code(el)
     local text = el.text
     local tag = text:match("^#(.+)$") or text
     local bubble_latex = string.format("\\bubbletag{%s}", tag)

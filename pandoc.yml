@@ -1,0 +1,16 @@
+# selene standard library definition for the pandoc Lua filter environment
+# https://pandoc.org/lua-filters.html
+---
+globals:
+  pandoc:
+    any: true
+  FORMAT:
+    property: read-only
+  PANDOC_VERSION:
+    property: read-only
+  PANDOC_API_VERSION:
+    property: read-only
+  PANDOC_SCRIPT_FILE:
+    property: read-only
+  PANDOC_STATE:
+    any: true

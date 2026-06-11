@@ -1,14 +1,14 @@
 local tabcolwidth = "11cm"
 
-function is_dot_line(inline)
+local function is_dot_line(inline)
     return inline.t == "Str" and inline.text == "."
 end
 
-function parse_element(el)
+local function parse_element(el)
     return pandoc.write(pandoc.Pandoc({el}), FORMAT)
 end
 
-function parse_inlines(inlines)
+local function parse_inlines(inlines)
     local new_inlines = {}
     for _, inline in ipairs(inlines) do
         if inline.t == "SoftBreak" then --  SoftBreak -> "\\"
@@ -23,7 +23,13 @@ function parse_inlines(inlines)
     return pandoc.write(pandoc.Pandoc({pandoc.Para(new_inlines)}), FORMAT):gsub("\n$", "")
 end
 
-function parse_blocks(blocks, no_vspace)
+local function wrap_list_in_pad(block)
+    local typst_str = pandoc.write(pandoc.Pandoc({block}), "typst")
+    local wrapped = "#pad(y: 0.25em)[\n" .. typst_str .. "\n]\n"
+    return pandoc.RawBlock("typst", wrapped)
+end
+
+local function parse_blocks(blocks)
     local parsed_blocks = {}
     for _, block in ipairs(blocks) do
         if block.t == "BulletList" and FORMAT == "typst" then
@@ -39,7 +45,7 @@ function parse_blocks(blocks, no_vspace)
     return latex
 end
 
-function split_inlines_at_pipe(inlines)
+local function split_inlines_at_pipe(inlines)
     local label, text = {}, {}
     local found_pipe = false
 
@@ -59,11 +65,7 @@ function split_inlines_at_pipe(inlines)
     return label, text
 end
 
-function trim(s)
-    return (s:gsub("^%s*(.-)%s*$", "%1"))
-end
-
-function process_list(list)
+local function process_list(list)
     local latex_rows = {}
     local typst_rows = {}
 
@@ -79,7 +81,6 @@ function process_list(list)
             local firstBlock = item[1]
             if firstBlock.t == "Para" or firstBlock.t == "Plain" then
                 local label_inlines, text_inlines = split_inlines_at_pipe(firstBlock.content)
-                local label_text = parse_inlines(label_inlines)
                 label = parse_element(pandoc.SmallCaps(label_inlines))
                 local text_parsed = parse_inlines(text_inlines)
                 if text_parsed ~= "" then
@@ -93,7 +94,7 @@ function process_list(list)
                 for i = 2, #item do
                     table.insert(remaining_blocks, item[i])
                 end
-                local nested_latex = parse_blocks(remaining_blocks, false) -- #texts > 0)
+                local nested_latex = parse_blocks(remaining_blocks)
                 table.insert(texts, nested_latex)
             end
 
@@ -116,7 +117,7 @@ function process_list(list)
     return {pandoc.RawBlock("latex", latex_table), pandoc.RawBlock("typst", typst_table)}
 end
 
-function Pandoc(doc)
+local function Pandoc(doc)
     local new_blocks = {}
     local i = 1
     while i <= #doc.blocks do
@@ -137,17 +138,17 @@ function Pandoc(doc)
     return doc
 end
 
-function Strong(elem)
+local function Strong(elem)
     return pandoc.SmallCaps(elem.content)
 end
 
-function Header(el)
+local function Header(el)
     el.classes = {"unnumbered"}
     return el
 end
 
-function wrap_list_in_pad(block)
-    local typst_str = pandoc.write(pandoc.Pandoc({block}), "typst")
-    local wrapped = "#pad(y: 0.25em)[\n" .. typst_str .. "\n]\n"
-    return pandoc.RawBlock("typst", wrapped)
-end
+return {{
+    Strong = Strong,
+    Header = Header,
+    Pandoc = Pandoc
+}}
