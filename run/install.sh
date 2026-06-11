@@ -12,7 +12,7 @@ touch $SCRIPT_FILE
 chmod u+x $SCRIPT_FILE
 
 cat > $SCRIPT_FILE << EOM
-#/bin/bash
+#!/bin/bash
 
 MD2PDF_DIR="$(pwd)"
 export MD2PDF_DIR
