@@ -17,16 +17,16 @@ FILE_ARG=""
 # Parse args
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --raw)
-      RAW=1
-      shift
-      ;;
-    *)
-      if [[ -z "$FILE_ARG" ]]; then
-        FILE_ARG="$1"
-      fi
-      shift
-      ;;
+  --raw)
+    RAW=1
+    shift
+    ;;
+  *)
+    if [[ -z "$FILE_ARG" ]]; then
+      FILE_ARG="$1"
+    fi
+    shift
+    ;;
   esac
 done
 
@@ -62,7 +62,7 @@ USER_CONFIG_FILE="$MD2PDF_DIR/config.yaml"
 
 if [[ ! -f $USER_CONFIG_FILE ]]; then
   echo "config.yaml not found. Creating from config.example.yaml ..."
-  cp $EXAMPLE_CONFIG_FILE $USER_CONFIG_FILE
+  cp "$EXAMPLE_CONFIG_FILE" "$USER_CONFIG_FILE"
 fi
 
 CONFIG_FILE=$([[ "$CWD" == "$MD2PDF_DIR/examples" ]] && echo "$EXAMPLE_CONFIG_FILE" || echo "$USER_CONFIG_FILE")
@@ -87,7 +87,7 @@ pandoc_cmd=(
 if ! "${pandoc_cmd[@]}"; then
   echo "❌ Error: pandoc failed"
   exit 1
-else 
+else
   BOLD='\033[1m'
   RESET='\033[0m'
   echo -e "✅ Compiled ${BOLD}$OUT_FILE${RESET} using ${PDF_ENGINE}"

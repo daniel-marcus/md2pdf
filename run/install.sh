@@ -7,11 +7,11 @@ SCRIPT_FILE="$HOME/.local/bin/md2pdf"
 echo -e "Creating ${SCRIPT_FILE} ..."
 echo
 
-mkdir -p "$(dirname "$SCRIPT_FILE")"   # Create directory if not exists
-touch $SCRIPT_FILE
-chmod u+x $SCRIPT_FILE
+mkdir -p "$(dirname "$SCRIPT_FILE")" # Create directory if not exists
+touch "$SCRIPT_FILE"
+chmod u+x "$SCRIPT_FILE"
 
-cat > $SCRIPT_FILE << EOM
+cat >"$SCRIPT_FILE" <<EOM
 #!/bin/bash
 
 MD2PDF_DIR="$(pwd)"

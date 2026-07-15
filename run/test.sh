@@ -24,13 +24,13 @@ for MD_FILE in "$MD2PDF_DIR"/examples/*.md; do
   NAME=$(basename "$MD_FILE" .md)
   rm -f "$MD2PDF_DIR/examples/$NAME".{tex,typ} # stale outputs from earlier runs
 
-  if ! MD2PDF_DIR="$MD2PDF_DIR" "$MD2PDF_DIR/run/compile.sh" --raw "$MD_FILE" > /dev/null; then
+  if ! "$MD2PDF_DIR/run/compile.sh" --raw "$MD_FILE" >/dev/null; then
     echo -e "❌ ${BOLD}$NAME${RESET}: compilation failed"
     FAIL=1
     continue
   fi
 
-  OUT_FILE=$(ls "$MD2PDF_DIR/examples/$NAME".{tex,typ} 2>/dev/null | head -1)
+  OUT_FILE=$(find "$MD2PDF_DIR/examples/$NAME".{tex,typ} 2>/dev/null | head -1)
   OUT_NAME=$(basename "$OUT_FILE")
   mv "$OUT_FILE" "$TMP_DIR/"
 
